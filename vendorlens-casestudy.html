@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VendorLens — Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:       #0D1117;
+    --ink-mid:   #3A4452;
+    --ink-soft:  #6B7A8F;
+    --rule:      #DDE3EC;
+    --surface:   #F4F6FA;
+    --white:     #FFFFFF;
+    --accent:    #1B4FD8;
+    --accent-lt: #EBF0FD;
+    --warn:      #C0392B;
+    --mono:      'DM Mono', monospace;
+    --sans:      'DM Sans', system-ui, sans-serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--white);
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 50;
+    background: var(--white);
+    border-bottom: 1px solid var(--rule);
+    padding: 0 48px;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 56px;
+  }
+  .nav-brand { font-size: 15px; font-weight: 600; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+  .nav-back { font-size: 13px; color: var(--ink-soft); text-decoration: none; display: flex; align-items: center; gap: 5px; }
+  .nav-back:hover { color: var(--accent); }
+  .nav-tag { font-size: 11px; font-weight: 500; font-family: var(--mono); background: var(--accent-lt); color: var(--accent); padding: 3px 8px; border-radius: 4px; }
+
+  /* LAYOUT */
+  .container { max-width: 760px; margin: 0 auto; padding: 0 32px; }
+  .container-wide { max-width: 1020px; margin: 0 auto; padding: 0 32px; }
+
+  /* HERO */
+  .hero { padding: 72px 0 56px; border-bottom: 1px solid var(--rule); }
+  .hero-meta { font-family: var(--mono); font-size: 12px; color: var(--ink-soft); margin-bottom: 20px; letter-spacing: 0.02em; }
+  .hero h1 { font-size: clamp(32px, 5vw, 48px); font-weight: 300; line-height: 1.15; color: var(--ink); letter-spacing: -0.02em; max-width: 680px; }
+  .hero h1 strong { font-weight: 600; }
+  .hero-sub { font-size: 17px; color: var(--ink-mid); margin-top: 20px; max-width: 580px; line-height: 1.65; font-weight: 300; }
+  .hero-cta { margin-top: 36px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--accent); color: #fff; text-decoration: none;
+    padding: 12px 24px; border-radius: 8px; font-size: 14px; font-weight: 500;
+    transition: background 0.15s;
+  }
+  .btn-primary:hover { background: #1440b8; }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 6px;
+    color: var(--ink-mid); text-decoration: none;
+    padding: 12px 0; font-size: 14px; border-bottom: 1px solid transparent;
+  }
+  .btn-ghost:hover { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* SIGNAL STRIP */
+  .signals { padding: 40px 0; border-bottom: 1px solid var(--rule); }
+  .signals-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+  .signal-item { padding: 0 32px 0 0; border-right: 1px solid var(--rule); }
+  .signal-item:last-child { border-right: none; padding-right: 0; padding-left: 32px; }
+  .signal-item:first-child { padding-left: 0; }
+  .signal-item:not(:first-child):not(:last-child) { padding: 0 32px; }
+  .signal-num { font-size: 36px; font-weight: 300; color: var(--ink); letter-spacing: -0.03em; line-height: 1; margin-bottom: 6px; }
+  .signal-num.alert { color: var(--warn); }
+  .signal-label { font-size: 12px; color: var(--ink-soft); font-family: var(--mono); }
+
+  /* SECTIONS */
+  section { padding: 64px 0; border-bottom: 1px solid var(--rule); }
+  section:last-of-type { border-bottom: none; }
+  .section-label { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); margin-bottom: 28px; letter-spacing: 0.04em; }
+  h2 { font-size: 26px; font-weight: 500; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 16px; line-height: 1.3; }
+  p { color: var(--ink-mid); line-height: 1.75; margin-bottom: 16px; font-weight: 300; }
+  p:last-child { margin-bottom: 0; }
+
+  /* PROBLEM / SOLUTION two-col */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  .two-col-label { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); margin-bottom: 12px; letter-spacing: 0.04em; }
+  .two-col h3 { font-size: 18px; font-weight: 500; margin-bottom: 12px; color: var(--ink); letter-spacing: -0.01em; }
+
+  /* SCORE TABLE */
+  .score-table { width: 100%; border-collapse: collapse; margin-top: 24px; }
+  .score-table th { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); font-weight: 500; text-align: left; padding: 8px 12px 8px 0; border-bottom: 1px solid var(--rule); }
+  .score-table td { font-size: 14px; padding: 14px 12px 14px 0; border-bottom: 1px solid var(--surface); vertical-align: top; color: var(--ink-mid); line-height: 1.55; }
+  .score-table td:first-child { color: var(--ink); font-weight: 500; white-space: nowrap; width: 200px; }
+  .weight-badge { display: inline-block; font-family: var(--mono); font-size: 11px; font-weight: 500; background: var(--accent-lt); color: var(--accent); padding: 2px 7px; border-radius: 4px; }
+
+  /* ARCHITECTURE */
+  .arch-list { list-style: none; margin-top: 24px; }
+  .arch-list li { display: flex; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--rule); align-items: flex-start; }
+  .arch-list li:last-child { border-bottom: none; }
+  .arch-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--surface); display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+  .arch-title { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+  .arch-desc { font-size: 13px; color: var(--ink-soft); line-height: 1.55; font-weight: 300; }
+
+  /* SKILLS DEMONSTRATED */
+  .skills-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+  .skill-card { background: var(--surface); border-radius: 10px; padding: 20px; }
+  .skill-card-title { font-size: 14px; font-weight: 500; color: var(--ink); margin-bottom: 8px; }
+  .skill-card-body { font-size: 13px; color: var(--ink-soft); line-height: 1.6; font-weight: 300; }
+
+  /* QUOTE / CALLOUT */
+  .callout { background: var(--accent-lt); border-left: 3px solid var(--accent); padding: 20px 24px; border-radius: 0 8px 8px 0; margin: 32px 0; }
+  .callout p { color: var(--ink); font-style: italic; font-weight: 300; font-size: 15px; line-height: 1.7; margin: 0; }
+
+  /* FOOTER */
+  footer { padding: 40px 0; }
+  .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .footer-links { display: flex; gap: 24px; }
+  .footer-links a { font-size: 13px; color: var(--ink-soft); text-decoration: none; }
+  .footer-links a:hover { color: var(--accent); }
+  .footer-copy { font-size: 12px; color: var(--ink-soft); font-family: var(--mono); }
+
+  @media (max-width: 680px) {
+    nav { padding: 0 20px; }
+    .container, .container-wide { padding: 0 20px; }
+    .signals-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+    .signal-item { border-right: none; padding: 0 !important; }
+    .two-col { grid-template-columns: 1fr; gap: 32px; }
+    .skills-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-brand" href="https://rishendra125.github.io">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5"/>
+      <path d="M8 12h8M12 8v8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+    </svg>
+    Rishendra Singh
+  </a>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <span class="nav-tag">AI Portfolio</span>
+    <a class="nav-back" href="https://rishendra125.github.io">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M19 12H5M12 5l-7 7 7 7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+      All projects
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="container">
+  <div class="hero">
+    <div class="hero-meta">VendorLens &nbsp;·&nbsp; Vendor Governance & Risk Intelligence &nbsp;·&nbsp; 2024</div>
+    <h1>An AI layer on top of <strong>vendor oversight</strong> — the work a Control Manager does before the risk committee meets</h1>
+    <p class="hero-sub">A working dashboard that scores vendor risk across six dimensions, tracks governance cadence, and generates committee-ready briefs using the Claude API — built to bridge a functional gap between PMO delivery management and vendor risk oversight.</p>
+    <div class="hero-cta">
+      <a class="btn-primary" href="#" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        Open live demo
+      </a>
+      <a class="btn-ghost" href="https://github.com/rishendra125" target="_blank">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        View source
+      </a>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNAL STRIP -->
+<div class="container-wide">
+  <div class="signals">
+    <div class="signals-grid">
+      <div class="signal-item">
+        <div class="signal-num">8</div>
+        <div class="signal-label">vendors tracked</div>
+      </div>
+      <div class="signal-item">
+        <div class="signal-num">6</div>
+        <div class="signal-label">risk dimensions scored</div>
+      </div>
+      <div class="signal-item">
+        <div class="signal-num alert">3</div>
+        <div class="signal-label">governance overdue</div>
+      </div>
+      <div class="signal-item">
+        <div class="signal-num">5</div>
+        <div class="signal-label">sections per AI brief</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PROBLEM / SOLUTION -->
+<div class="container">
+  <section>
+    <div class="section-label">context</div>
+    <div class="two-col">
+      <div>
+        <div class="two-col-label">the gap</div>
+        <h3>Vendor oversight is a judgment-intensive discipline, not just a reporting exercise</h3>
+        <p>Control Manager and Vendor Risk roles in financial institutions require translating raw vendor data — SLA rates, due diligence ages, contract proximity, financial health — into prioritised governance positions. That translation is where PMO skills fall short of what the role demands.</p>
+        <p>Most vendor dashboards surface data. Few help a manager answer the question a risk committee actually asks: <em>which vendors need attention right now, and why?</em></p>
+      </div>
+      <div>
+        <div class="two-col-label">the approach</div>
+        <h3>A scoring model plus AI narration, structured around what a committee actually reads</h3>
+        <p>VendorLens applies a six-factor weighted risk model to each vendor in the register, producing a score that reflects governance exposure rather than just operational performance. The AI layer then reads those scores and produces a structured brief — Vendor Overview, Risk Summary, Key Concerns, Recommended Actions, Governance Status — in the language a Control Manager would use.</p>
+        <p>The output is designed to be copied directly into a committee pack, not into a developer's inbox.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCORE MODEL -->
+  <section>
+    <div class="section-label">design decision</div>
+    <h2>Why a multi-dimensional score, not just SLA compliance</h2>
+    <p>The common proxy for vendor health is SLA compliance. It is the easiest metric to pull and the one most dashboards default to. But a vendor can be 95% SLA-compliant while operating on an expired contract, with a due diligence that is two years stale, and a financial health score that signals instability. Each of those facts individually is a governance concern. Together, they represent an unacceptable risk position — and averaging them into one number would obscure that.</p>
+    <p>The model below treats each dimension as a separate signal, weighted by how directly it contributes to regulatory or operational exposure. Concentration risk and governance cadence carry more weight than open issue count because their consequences are harder to recover from quickly.</p>
+
+    <div class="callout">
+      <p>Scores range 0–100. A vendor can score 81 with a 78% SLA rate — lower than a vendor scoring 52 with 94% SLA. That is intentional: the 81 also has an expired contract, a due diligence gap of over two years, and five open issues. The score reflects the full governance picture.</p>
+    </div>
+
+    <table class="score-table">
+      <thead>
+        <tr>
+          <th>Factor</th>
+          <th>Weight</th>
+          <th>Rationale</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>SLA Compliance</td>
+          <td><span class="weight-badge">25%</span></td>
+          <td>Operational reliability is the most visible indicator of service quality. Vendors below 85% are treated as materially non-compliant.</td>
+        </tr>
+        <tr>
+          <td>Financial Health</td>
+          <td><span class="weight-badge">20%</span></td>
+          <td>Low financial health signals vendor instability and potential service disruption. Critical for any vendor providing essential or sensitive services.</td>
+        </tr>
+        <tr>
+          <td>Concentration Risk</td>
+          <td><span class="weight-badge">20%</span></td>
+          <td>High dependency on a single vendor amplifies the impact of any failure. Assessed as High / Medium / Low based on service criticality and substitutability.</td>
+        </tr>
+        <tr>
+          <td>Governance Cadence</td>
+          <td><span class="weight-badge">20%</span></td>
+          <td>Missed review cycles are a direct control failure. An overdue cadence is treated as a binary trigger — it adds a fixed penalty regardless of other scores.</td>
+        </tr>
+        <tr>
+          <td>Contract Proximity</td>
+          <td><span class="weight-badge">10%</span></td>
+          <td>Contracts expiring within 90 days require active management. Expired contracts contribute maximum score — operating without a contract is itself a governance breach.</td>
+        </tr>
+        <tr>
+          <td>Open Issues</td>
+          <td><span class="weight-badge">5%</span></td>
+          <td>Each unresolved issue adds to exposure. Four or more open issues are treated as a high-risk indicator regardless of their individual severity.</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section>
+    <div class="section-label">technical build</div>
+    <h2>Architecture</h2>
+    <p>Built as a single React component with no backend — all state lives in the client, vendor data is hardcoded JSON, and the only external call is to the Claude API when a brief is requested. This keeps the demo self-contained and deployable as a static file.</p>
+
+    <ul class="arch-list">
+      <li>
+        <div class="arch-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" stroke="#6B7A8F" strokeWidth="1.5"/><path d="M9 9h6M9 12h6M9 15h4" stroke="#6B7A8F" strokeWidth="1.5" strokeLinecap="round"/></svg>
+        </div>
+        <div>
+          <div class="arch-title">Vendor register — hardcoded JSON</div>
+          <div class="arch-desc">8 synthetic vendors across Cloud Infrastructure, BPO, Legal, Cybersecurity, Payments, HR, Document Management, and Compliance Consulting. Each carries 12 fields covering contract dates, SLA, financial health, concentration risk, regulatory scope, and governance cadence. Realistic enough to demonstrate domain vocabulary to an interviewer.</div>
+        </div>
+      </li>
+      <li>
+        <div class="arch-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke="#6B7A8F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </div>
+        <div>
+          <div class="arch-title">Risk scoring — weighted JS formula</div>
+          <div class="arch-desc">Scores are computed at load time from the vendor data, not generated by AI. Six factors, each with defined weight and threshold logic. The formula is exposed via a "How scores are calculated" modal inside the tool — so an interviewer can inspect the logic without reading code.</div>
+        </div>
+      </li>
+      <li>
+        <div class="arch-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#6B7A8F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        </div>
+        <div>
+          <div class="arch-title">Governance brief — Claude API (claude-sonnet-4-6)</div>
+          <div class="arch-desc">On request, the tool constructs a structured prompt from the vendor's live data — including computed metrics like days to contract expiry and due diligence age in months — and calls the Anthropic API. The model is prompted to write as a Control Manager briefing a risk committee, in five named sections, in paragraph form. Output is parsed and rendered section by section; a "Copy Brief" button produces plain text formatted for a committee pack.</div>
+        </div>
+      </li>
+      <li>
+        <div class="arch-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M3 4h18M3 8h18M3 12h18M3 16h18M3 20h18" stroke="#6B7A8F" strokeWidth="1.5" strokeLinecap="round"/></svg>
+        </div>
+        <div>
+          <div class="arch-title">Dashboard layer — React with sortable table and detail panel</div>
+          <div class="arch-desc">Sortable by risk score, SLA compliance, contract expiry, open issues, or vendor name. Filterable by category. Clicking any row opens a detail panel with a metrics grid, contract and governance timeline, and regulatory scope. All interactions are client-side with no page reloads.</div>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- SKILLS -->
+  <section>
+    <div class="section-label">what this demonstrates</div>
+    <h2>Skills mapped to the Control Manager role</h2>
+    <p>The tool is an argument, not just a demo. Each design decision maps to a capability a vendor risk or control manager is expected to have.</p>
+
+    <div class="skills-grid">
+      <div class="skill-card">
+        <div class="skill-card-title">Vendor risk assessment</div>
+        <div class="skill-card-body">The scoring model reflects how vendor risk is actually assessed — across financial health, operational performance, contractual coverage, and governance compliance — not just service delivery metrics.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-title">Governance reporting</div>
+        <div class="skill-card-body">The AI brief output mirrors the structure of a real vendor governance note: overview, risk position, concerns, actions, status. The "Copy Brief" flow treats committee packs as the actual use case, not a screen export.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-title">Due diligence oversight</div>
+        <div class="skill-card-body">Due diligence age is surfaced as a computed field (months since last DD) and treated as a first-class risk signal — not buried in a date field. Overdue reviews are flagged at the register level, not just in the detail view.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-title">Regulatory framework literacy</div>
+        <div class="skill-card-body">Vendor records carry regulatory scope flags (ISO 27001, SOC 2, GDPR, PCI-DSS, Outsourcing Risk Framework). The AI brief references these flags in its risk and action sections, demonstrating that regulatory context drives governance, not the other way around.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-title">Stakeholder communication</div>
+        <div class="skill-card-body">The brief prompt instructs the model to write for a senior audience in plain English. The output avoids jargon and data-dumps — the same discipline required when presenting to a risk committee or a CRO.</div>
+      </div>
+      <div class="skill-card">
+        <div class="skill-card-title">AI tooling for governance workflows</div>
+        <div class="skill-card-body">The tool demonstrates a practical AI integration pattern: structured data in, structured narrative out, with human review before distribution. This is how AI will be used in risk and compliance functions — augmenting judgment, not replacing it.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="https://rishendra125.github.io">Portfolio</a>
+        <a href="https://linkedin.com/in/rishendra-vikram-singh-a7355718a/">LinkedIn</a>
+        <a href="https://github.com/rishendra125">GitHub</a>
+      </div>
+      <div class="footer-copy">Rishendra Vikram Singh &nbsp;·&nbsp; PMP · PMI-ACP · A-CSM</div>
+    </div>
+  </footer>
+</div>
+
+</body>
+</html>
