@@ -18,6 +18,16 @@ VendorPulse gives a Control Manager or Vendor Risk Officer a single view of thei
 
 ---
 
+## Screenshots
+
+**Vendor Register — risk-sorted dashboard**
+![VendorPulse Dashboard](screenshots/screenshot-dashboard.png)
+
+**Governance Brief — AI-generated committee brief**
+![VendorPulse Governance Brief](screenshots/screenshot-brief.png)
+
+---
+
 ## Risk scoring model
 
 Scores are computed at load time from vendor data — not AI-generated. Six factors, each with defined weight and threshold logic:
